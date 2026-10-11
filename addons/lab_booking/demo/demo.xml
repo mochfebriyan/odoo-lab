@@ -27,18 +27,21 @@
         <field name="name">Demo Mahasiswa</field>
         <field name="login">mahasiswa</field>
         <field name="password">mahasiswa</field>
+        <field name="email">mahasiswa@upnfiklab.com</field>
         <field name="groups_id" eval="[(6, 0, [ref('lab_booking.group_lab_student')])]"/>
     </record>
     <record id="user_demo_asisten" model="res.users">
         <field name="name">Demo Asisten Lab</field>
         <field name="login">asisten</field>
         <field name="password">asisten</field>
+        <field name="email">asisten@upnfiklab.com</field>
         <field name="groups_id" eval="[(6, 0, [ref('lab_booking.group_lab_assistant')])]"/>
     </record>
     <record id="user_demo_kepala" model="res.users">
         <field name="name">Demo Kepala Lab</field>
         <field name="login">kepala</field>
         <field name="password">kepala</field>
+        <field name="email">kepala@upnfiklab.com</field>
         <field name="groups_id" eval="[(6, 0, [ref('lab_booking.group_lab_head')])]"/>
     </record>
 
