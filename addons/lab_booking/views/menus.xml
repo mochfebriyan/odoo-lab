@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_lab_root" name="Lab FIK" sequence="10"
+              web_icon="lab_booking,static/description/icon.png"
+              groups="lab_booking.group_lab_student"/>
+
+    <menuitem id="menu_lab_booking_parent" name="Peminjaman"
+              parent="menu_lab_root" sequence="10"/>
+
+    <menuitem id="menu_lab_booking" name="Semua Peminjaman"
+              parent="menu_lab_booking_parent" action="action_lab_booking" sequence="10"/>
+
+    <menuitem id="menu_lab_booking_to_approve" name="Menunggu Persetujuan"
+              parent="menu_lab_booking_parent" action="action_lab_booking_to_approve"
+              sequence="20" groups="lab_booking.group_lab_head"/>
+
+    <menuitem id="menu_lab_config" name="Master Data"
+              parent="menu_lab_root" sequence="90"
+              groups="lab_booking.group_lab_assistant"/>
+
+    <menuitem id="menu_lab_room" name="Ruang &amp; Alat"
+              parent="menu_lab_config" action="action_lab_room" sequence="10"/>
+</odoo>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Kategori di Settings > Users -->
+    <record id="module_category_lab" model="ir.module.category">
+        <field name="name">Lab FIK</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <!-- Groups (berjenjang: Kepala ⊃ Asisten ⊃ Mahasiswa) -->
+    <record id="group_lab_student" model="res.groups">
+        <field name="name">Mahasiswa</field>
+        <field name="category_id" ref="module_category_lab"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="group_lab_assistant" model="res.groups">
+        <field name="name">Asisten Lab</field>
+        <field name="category_id" ref="module_category_lab"/>
+        <field name="implied_ids" eval="[(4, ref('group_lab_student'))]"/>
+    </record>
+
+    <record id="group_lab_head" model="res.groups">
+        <field name="name">Kepala Lab</field>
+        <field name="category_id" ref="module_category_lab"/>
+        <field name="implied_ids" eval="[(4, ref('group_lab_assistant'))]"/>
+        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Record rules -->
+    <!-- Mahasiswa: hanya bisa LIHAT peminjaman miliknya -->
+    <record id="rule_booking_student_read" model="ir.rule">
+        <field name="name">Booking: mahasiswa lihat milik sendiri</field>
+        <field name="model_id" ref="model_lab_booking"/>
+        <field name="groups" eval="[(4, ref('group_lab_student'))]"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Mahasiswa: hanya bisa BUAT/UBAH peminjaman milik sendiri yang masih draft -->
+    <record id="rule_booking_student_write" model="ir.rule">
+        <field name="name">Booking: mahasiswa ubah draft sendiri</field>
+        <field name="model_id" ref="model_lab_booking"/>
+        <field name="groups" eval="[(4, ref('group_lab_student'))]"/>
+        <field name="domain_force">[('user_id', '=', user.id), ('state', '=', 'draft')]</field>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Asisten & Kepala: akses semua peminjaman -->
+    <record id="rule_booking_assistant_all" model="ir.rule">
+        <field name="name">Booking: asisten/kepala semua data</field>
+        <field name="model_id" ref="model_lab_booking"/>
+        <field name="groups" eval="[(4, ref('group_lab_assistant'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+</odoo>

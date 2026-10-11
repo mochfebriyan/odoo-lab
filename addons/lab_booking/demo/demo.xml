@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Ruang & alat -->
+    <record id="room_lab_komputer_1" model="lab.room">
+        <field name="name">Lab Komputer 1</field>
+        <field name="code">LK1</field>
+        <field name="resource_type">room</field>
+        <field name="capacity">40</field>
+        <field name="location">Gedung FIK Lt. 3</field>
+    </record>
+    <record id="room_lab_jaringan" model="lab.room">
+        <field name="name">Lab Jaringan</field>
+        <field name="code">LJ1</field>
+        <field name="resource_type">room</field>
+        <field name="capacity">30</field>
+        <field name="location">Gedung FIK Lt. 4</field>
+    </record>
+    <record id="equip_proyektor_1" model="lab.room">
+        <field name="name">Proyektor Epson #1</field>
+        <field name="code">PRJ-01</field>
+        <field name="resource_type">equipment</field>
+        <field name="capacity">0</field>
+    </record>
+
+    <!-- User demo per role (login = password) -->
+    <record id="user_demo_mahasiswa" model="res.users">
+        <field name="name">Demo Mahasiswa</field>
+        <field name="login">mahasiswa</field>
+        <field name="password">mahasiswa</field>
+        <field name="groups_id" eval="[(6, 0, [ref('lab_booking.group_lab_student')])]"/>
+    </record>
+    <record id="user_demo_asisten" model="res.users">
+        <field name="name">Demo Asisten Lab</field>
+        <field name="login">asisten</field>
+        <field name="password">asisten</field>
+        <field name="groups_id" eval="[(6, 0, [ref('lab_booking.group_lab_assistant')])]"/>
+    </record>
+    <record id="user_demo_kepala" model="res.users">
+        <field name="name">Demo Kepala Lab</field>
+        <field name="login">kepala</field>
+        <field name="password">kepala</field>
+        <field name="groups_id" eval="[(6, 0, [ref('lab_booking.group_lab_head')])]"/>
+    </record>
+
+    <!-- Contoh peminjaman -->
+    <record id="booking_demo_1" model="lab.booking">
+        <field name="user_id" ref="user_demo_mahasiswa"/>
+        <field name="room_id" ref="room_lab_komputer_1"/>
+        <field name="start_datetime" eval="(DateTime.today() + relativedelta(days=1, hours=2)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="end_datetime" eval="(DateTime.today() + relativedelta(days=1, hours=4)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="purpose">Latihan presentasi proyek akhir</field>
+        <field name="participant_count">5</field>
+        <field name="state">submitted</field>
+    </record>
+    <record id="booking_demo_2" model="lab.booking">
+        <field name="user_id" ref="user_demo_asisten"/>
+        <field name="room_id" ref="room_lab_jaringan"/>
+        <field name="start_datetime" eval="(DateTime.today() + relativedelta(days=2, hours=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="end_datetime" eval="(DateTime.today() + relativedelta(days=2, hours=3)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="purpose">Praktikum Jaringan Komputer kelas B</field>
+        <field name="participant_count">25</field>
+        <field name="state">approved</field>
+    </record>
+</odoo>

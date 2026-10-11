@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_lab_booking_tree" model="ir.ui.view">
+        <field name="name">lab.booking.tree</field>
+        <field name="model">lab.booking</field>
+        <field name="arch" type="xml">
+            <tree decoration-info="state == 'submitted'"
+                  decoration-success="state == 'approved'"
+                  decoration-danger="state == 'rejected'"
+                  decoration-muted="state in ('done', 'cancelled')">
+                <field name="name"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="room_id"/>
+                <field name="start_datetime"/>
+                <field name="end_datetime"/>
+                <field name="duration" widget="float_time" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'submitted'"
+                       decoration-success="state in ('approved', 'done')"
+                       decoration-danger="state == 'rejected'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_lab_booking_form" model="ir.ui.view">
+        <field name="name">lab.booking.form</field>
+        <field name="model">lab.booking</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_submit" type="object" string="Ajukan"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object" string="Setujui"
+                            class="btn-primary" invisible="state != 'submitted'"
+                            groups="lab_booking.group_lab_head"/>
+                    <button name="action_reject" type="object" string="Tolak"
+                            invisible="state != 'submitted'"
+                            groups="lab_booking.group_lab_head"/>
+                    <button name="action_done" type="object" string="Tandai Selesai"
+                            class="btn-primary" invisible="state != 'approved'"
+                            groups="lab_booking.group_lab_assistant"/>
+                    <button name="action_cancel" type="object" string="Batalkan"
+                            invisible="state not in ('draft', 'submitted', 'approved')"
+                            confirm="Batalkan peminjaman ini?"/>
+                    <button name="action_reset_draft" type="object" string="Kembalikan ke Draft"
+                            invisible="state not in ('rejected', 'cancelled')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="user_id" readonly="1" widget="many2one_avatar_user"/>
+                            <field name="room_id" readonly="state != 'draft'"
+                                   options="{'no_create': True}"/>
+                            <field name="participant_count" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="start_datetime" readonly="state != 'draft'"/>
+                            <field name="end_datetime" readonly="state != 'draft'"/>
+                            <field name="duration" widget="float_time"/>
+                            <field name="approver_id" invisible="not approver_id"/>
+                        </group>
+                    </group>
+                    <group string="Keperluan">
+                        <field name="purpose" nolabel="1" colspan="2"
+                               readonly="state != 'draft'"
+                               placeholder="mis. Praktikum Basis Data kelas A"/>
+                    </group>
+                    <field name="can_approve" invisible="1"/>
+                    <group string="Alasan Penolakan"
+                           invisible="state not in ('submitted', 'rejected') or (state == 'submitted' and not can_approve)">
+                        <field name="reject_reason" nolabel="1" colspan="2"
+                               readonly="state != 'submitted' or not can_approve"
+                               placeholder="Wajib diisi sebelum menolak"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_lab_booking_calendar" model="ir.ui.view">
+        <field name="name">lab.booking.calendar</field>
+        <field name="model">lab.booking</field>
+        <field name="arch" type="xml">
+            <calendar date_start="start_datetime" date_stop="end_datetime"
+                      color="room_id" mode="week" event_open_popup="0" quick_create="0">
+                <field name="user_id"/>
+                <field name="room_id" filters="1"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_lab_booking_search" model="ir.ui.view">
+        <field name="name">lab.booking.search</field>
+        <field name="model">lab.booking</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="room_id"/>
+                <filter name="my_bookings" string="Peminjaman Saya"
+                        domain="[('user_id', '=', uid)]"/>
+                <separator/>
+                <filter name="to_approve" string="Menunggu Persetujuan"
+                        domain="[('state', '=', 'submitted')]"/>
+                <filter name="approved" string="Disetujui"
+                        domain="[('state', '=', 'approved')]"/>
+                <separator/>
+                <filter name="filter_start" string="Tanggal Mulai" date="start_datetime"/>
+                <group expand="0" string="Kelompokkan">
+                    <filter name="group_room" string="Ruang/Alat" context="{'group_by': 'room_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_user" string="Peminjam" context="{'group_by': 'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_lab_booking" model="ir.actions.act_window">
+        <field name="name">Peminjaman</field>
+        <field name="res_model">lab.booking</field>
+        <field name="view_mode">tree,calendar,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Buat peminjaman ruang/alat lab</p>
+        </field>
+    </record>
+
+    <record id="action_lab_booking_to_approve" model="ir.actions.act_window">
+        <field name="name">Menunggu Persetujuan</field>
+        <field name="res_model">lab.booking</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_to_approve': 1}</field>
+    </record>
+</odoo>

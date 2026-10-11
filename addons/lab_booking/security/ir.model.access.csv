@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_lab_room_student,lab.room mahasiswa,model_lab_room,group_lab_student,1,0,0,0
+access_lab_room_assistant,lab.room asisten,model_lab_room,group_lab_assistant,1,1,1,0
+access_lab_room_head,lab.room kepala,model_lab_room,group_lab_head,1,1,1,1
+access_lab_booking_student,lab.booking mahasiswa,model_lab_booking,group_lab_student,1,1,1,0
+access_lab_booking_assistant,lab.booking asisten,model_lab_booking,group_lab_assistant,1,1,1,0
+access_lab_booking_head,lab.booking kepala,model_lab_booking,group_lab_head,1,1,1,1
