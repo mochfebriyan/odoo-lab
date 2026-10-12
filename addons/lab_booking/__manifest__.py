@@ -9,6 +9,7 @@ MVP modul peminjaman ruang/alat laboratorium FIK.
 - 3 role: Mahasiswa, Asisten Lab, Kepala Lab
 - Record rule: mahasiswa hanya melihat peminjaman miliknya
 - Validasi jadwal bentrok & kapasitas ruang
+- Cetak PDF bukti peminjaman (status Disetujui/Selesai)
     """,
     "version": "17.0.1.0.0",
     "category": "Services",
@@ -19,6 +20,7 @@ MVP modul peminjaman ruang/alat laboratorium FIK.
         "security/security.xml",
         "security/ir.model.access.csv",
         "data/sequence.xml",
+        "report/lab_booking_report.xml",
         "views/lab_room_views.xml",
         "views/lab_booking_views.xml",
         "views/menus.xml",

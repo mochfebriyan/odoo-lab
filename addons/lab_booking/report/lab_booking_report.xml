@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_booking_receipt" model="ir.actions.report">
+        <field name="name">Bukti Peminjaman</field>
+        <field name="model">lab.booking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">lab_booking.report_booking_receipt</field>
+        <field name="report_file">lab_booking.report_booking_receipt</field>
+        <field name="print_report_name">'Bukti Peminjaman - %s' % (object.name or '').replace('/', '-')</field>
+        <field name="binding_model_id" ref="model_lab_booking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_booking_receipt_document">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <h3 class="text-center mb-1">BUKTI PEMINJAMAN RUANG / ALAT LAB</h3>
+                <p class="text-center mb-4">
+                    No. <strong t-field="doc.name"/>
+                </p>
+
+                <table class="table table-sm table-borderless">
+                    <tr>
+                        <td style="width: 30%;">Peminjam</td>
+                        <td>: <span t-field="doc.user_id"/></td>
+                    </tr>
+                    <tr>
+                        <td>Ruang / Alat</td>
+                        <td>
+                            : <span t-field="doc.room_id"/>
+                            (<span t-field="doc.room_id.code"/>)
+                        </td>
+                    </tr>
+                    <tr t-if="doc.room_id.location">
+                        <td>Lokasi</td>
+                        <td>: <span t-field="doc.room_id.location"/></td>
+                    </tr>
+                    <tr>
+                        <td>Mulai</td>
+                        <td>: <span t-field="doc.start_datetime"/></td>
+                    </tr>
+                    <tr>
+                        <td>Selesai</td>
+                        <td>: <span t-field="doc.end_datetime"/></td>
+                    </tr>
+                    <tr>
+                        <td>Durasi</td>
+                        <td>: <span t-field="doc.duration" t-options="{'widget': 'float_time'}"/> jam</td>
+                    </tr>
+                    <tr>
+                        <td>Jumlah Peserta</td>
+                        <td>: <span t-field="doc.participant_count"/> orang</td>
+                    </tr>
+                    <tr>
+                        <td>Keperluan</td>
+                        <td>: <span t-field="doc.purpose"/></td>
+                    </tr>
+                    <tr>
+                        <td>Status</td>
+                        <td>: <strong t-field="doc.state"/></td>
+                    </tr>
+                </table>
+
+                <div t-if="doc.room_id.note" class="mt-3">
+                    <strong>Aturan Pemakaian:</strong>
+                    <p t-field="doc.room_id.note"/>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-6 text-center">
+                        <p>Peminjam,</p>
+                        <br/><br/><br/>
+                        <p><strong t-field="doc.user_id"/></p>
+                    </div>
+                    <div class="col-6 text-center">
+                        <p>Disetujui oleh,<br/>Kepala Lab</p>
+                        <br/><br/>
+                        <p><strong t-field="doc.approver_id"/></p>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_booking_receipt">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="lab_booking.report_booking_receipt_document"/>
+            </t>
+        </t>
+    </template>
+</odoo>

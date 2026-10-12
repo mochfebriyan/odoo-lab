@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from odoo.exceptions import AccessError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import TransactionCase, new_test_user, tagged
 
 
@@ -60,3 +60,15 @@ class TestLabBooking(TransactionCase):
         b.with_user(self.head).action_approve()
         self.assertEqual(b.state, "approved")
         self.assertEqual(b.approver_id, self.head)
+
+    def test_receipt_pdf_only_when_approved(self):
+        b = self._booking(self.student_a, self.start)
+        report = self.env["ir.actions.report"]
+        with self.assertRaises(UserError):
+            report._render_qweb_html("lab_booking.report_booking_receipt", b.ids)
+        b.action_submit()
+        b.with_user(self.head).action_approve()
+        html, _fmt = report.with_user(self.student_a)._render_qweb_html(
+            "lab_booking.report_booking_receipt", b.ids
+        )
+        self.assertIn(b.name, html.decode())

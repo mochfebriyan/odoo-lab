@@ -39,6 +39,9 @@
                     <button name="action_done" type="object" string="Tandai Selesai"
                             class="btn-primary" invisible="state != 'approved'"
                             groups="lab_booking.group_lab_assistant"/>
+                    <button name="%(lab_booking.action_report_booking_receipt)d" type="action"
+                            string="Cetak Bukti" icon="fa-print"
+                            invisible="state not in ('approved', 'done')"/>
                     <button name="action_cancel" type="object" string="Batalkan"
                             invisible="state not in ('draft', 'submitted', 'approved')"
                             confirm="Batalkan peminjaman ini?"/>
